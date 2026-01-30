@@ -1,0 +1,4 @@
+actions\CategoryActions.class
+stepdefinitions\CategoryStepDefinitions.class
+actions\AuthenticationActions.class
+runners\CategoryTestRunner.class

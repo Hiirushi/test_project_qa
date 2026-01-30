@@ -1,0 +1,44 @@
+serenity {
+    project.name = "IS4600 Automation Project"
+    test.root = "stepdefinitions"
+    tag.failures = "true"
+    linked.tags = "issue"
+    take.screenshots = FOR_FAILURES
+    console.colors = true
+    logging = VERBOSE
+    report.encoding = UTF-8
+    compress.filenames = false
+    timeout = 30000
+    restart.browser.for.each = NEVER
+}
+
+# WebDriver Settings
+webdriver {
+    driver = chrome
+    timeouts.implicitlywait = 10000
+}
+
+chrome {
+    switches = "--start-maximized,--disable-infobars,--disable-extensions,--disable-gpu,--no-sandbox"
+}
+
+headless.mode = true
+
+# =============================================================================
+# Environment-Specific Configuration
+# =============================================================================
+# Use: mvn verify -Denvironment=dev
+# If no environment is specified, 'default' values are used
+# =============================================================================
+
+environments {
+    # Default environment (used when no -Denvironment is specified)
+    default {
+        api.base.url = "http://localhost:8080"
+        webdriver.base.url = "http://localhost:8080"
+        
+        # Test credentials - REPLACE THESE WITH YOUR ACTUAL CREDENTIALS
+        test.user.username = "your_username_here"
+        test.user.password = "your_password_here"
+    }
+}

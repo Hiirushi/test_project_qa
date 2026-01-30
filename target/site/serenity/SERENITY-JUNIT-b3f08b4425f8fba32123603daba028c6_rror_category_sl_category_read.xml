@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><testsuite errors="0" failures="0" name="Category Read Operations" skipped="0" tests="1" time="4.62" timestamp="2026-01-30 10:30:33"><testcase name="View non-existent category returns 404 error"/></testsuite>
