@@ -17,31 +17,79 @@ public class CategoryStepDefinitions {
     @Steps
     AuthenticationActions authenticationActions;
 
-    @Given("the user is authenticated")
-    public void theUserIsAuthenticated() {
+    @Given("the user is authenticated as admin")
+    public void theUserIsAuthenticatedAsAdmin() {
+        authenticationActions.authenticateAsAdmin();
+    }
+
+    @Given("the user is authenticated as user")
+    public void theUserIsAuthenticatedAsUser() {
         authenticationActions.authenticateUser();
-        // Auth token is stored in Serenity session by AuthenticationActions
     }
 
-    @Given("the following category IDs exist in the database")
-    public void theFollowingCategoryIDsExistInTheDatabase() {
-        categoryActions.fetchExistingCategoryIds();
+    private Integer lastCreatedCategoryId;
+
+    @Given("a category exists with name {string}")
+    public void aCategoryCreatesWithName(String name) {
+        categoryActions.createCategory(name);
+        lastCreatedCategoryId = categoryActions.getLastCreatedCategoryId();
     }
 
-    @When("the user sends a GET request to view category with a non-existent ID")
-    public void theUserSendsAGETRequestToViewCategoryWithANonExistentID() {
-        categoryActions.getCategoryWithNonExistentId();
+    @When("the admin creates a category with valid name {string}")
+    public void theAdminCreatesACategoryWithName(String categoryName) {
+        categoryActions.createCategoryWithValidData(categoryName);
     }
 
-    @Then("the response status code should be {int}")
-    public void theResponseStatusCodeShouldBe(int expectedStatusCode) {
+    @Then("the category should be created successfully")
+    public void theCategoryShouldBeCreatedSuccessfully() {
         assertThat(categoryActions.getLastResponseStatusCode())
-            .isEqualTo(expectedStatusCode);
+            .as("Category creation should succeed")
+            .isIn(200, 201);
     }
 
-    @Then("the response should contain error message {string}")
-    public void theResponseShouldContainErrorMessage(String expectedMessage) {
-        assertThat(categoryActions.getLastResponseBody())
-            .contains(expectedMessage);
+    @When("the admin creates a category with less than 3 characters {string}")
+    public void theAdminCreatesACategoryWithLessCharacters(String categoryName) {
+        categoryActions.createCategory(categoryName);
+    }
+
+    @When("the admin creates a category with more than 10 characters {string}")
+    public void theAdminCreatesACategoryWithMoreCharacters(String categoryName) {
+        categoryActions.createCategory(categoryName);
+    }
+
+    @When("the admin creates a category without name {string}")
+    public void theAdminCreatesACategoryWithoutName(String categoryName) {
+        categoryActions.createCategory(categoryName);
+    }
+
+    @When("the user creates a category with name {string}")
+    public void theUserCreatesACategoryWithName(String categoryName) {
+        categoryActions.createCategory(categoryName);
+    }
+
+    @Then("the category creation should fail")
+    public void theCategoryCreationShouldFail() {
+        assertThat(categoryActions.getLastResponseStatusCode())
+            .as("Category creation should not succeed")
+            .isIn(400, 401);
+    }
+
+    @Then("the user should be denied permission to create a category")
+    public void theUserShouldBeDeniedPermissionToCreateACategory() {
+        assertThat(categoryActions.getLastResponseStatusCode())
+            .as("Category creation should not succeed")
+            .isIn(403, 404);
+    }
+
+    @When("the admin deletes that category")
+    public void theAdminDeletesThatCategory() {
+        categoryActions.deleteCategoryById(categoryActions.getLastCreatedCategoryId());
+    }
+
+    @Then("the category should be deleted successfully")
+    public void theCategoryShouldBeDeletedSuccessfully() {
+        assertThat(categoryActions.getLastResponseStatusCode())
+            .as("Category deletion should succeed")
+            .isIn(204, 205);
     }
 }
